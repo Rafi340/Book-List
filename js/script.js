@@ -1,5 +1,6 @@
 //get html ui element
 let form = document.querySelector('#book-form');
+let bl = document.querySelector('#booklist'); // booklist
 
 class Book{
     constructor(title, author, isbn){
@@ -13,7 +14,7 @@ class UI{
     constructor(){
 
     }
-    addToBooklist(book){
+    static addToBooklist(book){
         let list = document.querySelector('#booklist');
         let row = document.querySelector('tr');
         row.innerHTML = `
@@ -25,12 +26,12 @@ class UI{
         list.appendChild(row);
        
     }
-    clear(){
+    static clear(){
         document.querySelector("#title").value ='';
         document.querySelector("#author").value = '';
         document.querySelector("#isbn").value = '';
     }
-    showAlert(message, className ){
+    static showAlert(message, className ){
         let div = document.createElement('div');
         div.className = `alert ${className}` ;
         div.appendChild(document.createTextNode(message));
@@ -42,17 +43,27 @@ class UI{
             document.querySelector('.alert').remove();
         }, 3000);
     }
+
+    static deleteFromBook(target)
+    {
+
+        if(target.hasAttribute('href')){
+            target.parentElement.parentElement.remove();
+            UI.showAlert('Book Delete from Ypur Library' , 'success');
+        }
+       // console.log(target);
+    }
 }
 
 form.addEventListener('submit', addBook);
-
+bl.addEventListener('click', deleteBook);
 
 function addBook(e){
    
     let title = document.querySelector("#title").value,
     author = document.querySelector("#author").value,
     isbn = document.querySelector("#isbn").value;
-    let uii = new UI();
+    //let uii = new UI();
     if(title == '' || author == '' || isbn == ''){
         uii.showAlert("Please fill al the fields!!", "error");
     }else{
@@ -61,10 +72,10 @@ function addBook(e){
         // console.log(book);
           
          
-         uii.addToBooklist(book);
-         uii.showAlert("Good Job for Add Book in Your Library !!", "success");
+         UI.addToBooklist(book);
+         UI.showAlert("Good Job for Add Book in Your Library !!", "success");
 
-         uii.clear();
+         UI.clear();
     }
     
    /* let book = new Book(title , author, isbn);
@@ -75,6 +86,13 @@ function addBook(e){
     uii.addToBooklist(book);
 
     uii.clear();*/
+    
+    e.preventDefault();
+}
+
+function deleteBook(e){
+   // let uii = new UI();
+    UI.deleteFromBook(e.target);
     
     e.preventDefault();
 }
