@@ -49,14 +49,49 @@ class UI{
 
         if(target.hasAttribute('href')){
             target.parentElement.parentElement.remove();
+            store.dltformls(target.parentElement.previousElementSibling.textContent.trim());
             UI.showAlert('Book Delete from Ypur Library' , 'success');
         }
        // console.log(target);
     }
 }
+class store {
+    static getBooks(){
+        let books;
+        if(localStorage.getItem('books') == null){
+            books = [];
+        }else{
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+        return books;
+    }
+    static addBooks(book) // for local storage
+    {
+        let books = store.getBooks();
+        books.push(book);
+
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+    static showbooklist(){
+        let books = store.getBooks();
+        books.forEach(book => {
+            UI.addToBooklist(book);
+        });
+    }
+    static dltformls(isbn){
+        let books = store.getBooks();
+        books.forEach((book, index) => {
+            if(book.isbn == isbn){
+                books.splice(index, 1);
+            }
+        });
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+}
 
 form.addEventListener('submit', addBook);
 bl.addEventListener('click', deleteBook);
+document.addEventListener('DOMContentLoaded', store.showbooklist());
 
 function addBook(e){
    
@@ -73,10 +108,13 @@ function addBook(e){
           
          
          UI.addToBooklist(book);
+         UI.clear();
          UI.showAlert("Good Job for Add Book in Your Library !!", "success");
 
-         UI.clear();
+         
+         store.addBooks(book);
     }
+    e.preventDefault();
     
    /* let book = new Book(title , author, isbn);
    // console.log(author);
@@ -87,7 +125,7 @@ function addBook(e){
 
     uii.clear();*/
     
-    e.preventDefault();
+   
 }
 
 function deleteBook(e){
